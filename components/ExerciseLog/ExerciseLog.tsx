@@ -1,14 +1,18 @@
 import React from "react";
 import { View,Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Entypo } from '@expo/vector-icons';
+import { useNavigation } from "expo-router";
 
 
 const ExerciseLog = () => {
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <Text style={styles.startText}>Tap "Add Exercise" to Start a New Log</Text>
             <Text style={styles.noExerciseText}>Last Workout: June 17th, 2024</Text>
-            <TouchableOpacity style={styles.addBtn}>
+            <TouchableOpacity 
+            style={styles.addBtn}
+            onPress={() => navigation.navigate('add-exercise')}>
                 <Entypo name="circle-with-plus" size={15} color="#ECBE69" /> 
                 <Text style={styles.btnText}>Add Exercise</Text>
             </TouchableOpacity>

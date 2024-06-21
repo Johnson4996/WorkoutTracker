@@ -4,6 +4,7 @@ import globalStyles from "../../styles/styles";
 import { DateSelector } from "./DateSelector";
 import { TouchableOpacity } from "react-native";
 import { SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 const Header = () => {
 
@@ -28,17 +29,33 @@ const Header = () => {
         selectText: {
         color: "black",
         fontFamily: "Lexend_400Regular",
+        },
+        btnContainer:{
+            flexDirection: "row",
+            justifyContent: "center",
         }
     });
+
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    const date = new Date();
+    const day = date.getDay();
+    const dateText = date.getDate();
+    const month = date.getMonth();
+
+    
     return (
         <View style={styles.headerContainer}>
             <Text style={globalStyles.text}>Hello, User</Text>
-            <Text style={globalStyles.textSecondary}>Wednesday, March 11th</Text>
+            <Text style={globalStyles.textSecondary}>{days[day]}, {months[month]} {dateText}</Text>
             <DateSelector/>
+            <View style={styles.btnContainer}>
             <TouchableOpacity style={styles.selectBtn}>
                 <Text style={styles.selectText}>Select a Workout Routine</Text>
                 <SimpleLineIcons name="arrow-down" size={18} color="black" />
             </TouchableOpacity>
+            </View>
         </View>
     );
 };

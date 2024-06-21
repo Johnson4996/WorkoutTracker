@@ -4,6 +4,7 @@ const globalStyles = StyleSheet.create({
   text: {
     color: '#FFFFFF', 
     fontFamily: 'Lexend_700Bold',
+    fontSize: 24
   },
   textSecondary:{
     color: '#ECBE69',
