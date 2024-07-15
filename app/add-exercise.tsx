@@ -1,10 +1,24 @@
+//TODO: Add success popup when successfully added exercise
+//TODO: Add error popup when error adding exercise
+//TODO: Fix padding at bottom when scrolling exercises
+
 import SearchBar from '@/components/SearchBar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { fetchExercisesByGroup } from '@/utils/database';
+import { addExercise, deleteExercise, fetchExercisesByGroup } from '@/utils/database';
+import NewExerciseModal from '@/components/NewExerciseModal';
+import ExerciseItem from '@/components/ExerciseItem';
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
+
+interface Exercise {
+  id: number;
+  name: string;
+  muscle_group: string;
+  description: string;
+}
 
 export default function AddExerciseScreen() {
 
@@ -13,6 +27,7 @@ const [searchPhrase, setSearchPhrase] = useState("");
 const [clicked, setClicked] = useState(false);
 const [activeTab, setActiveTab] = useState("chest");
 const [exercises, setExercises] = useState([]);
+const [viewModal, setViewModal] = useState(false);
 
 useEffect(() => {
   const fetchExercises = async () => {
@@ -26,11 +41,30 @@ useEffect(() => {
 
   fetchExercises();
 }, 
-[activeTab])
+[activeTab, exercises])
+
+
+
+
+
+const renderItem = ({ item }: { item: Exercise }) => (
+  <ExerciseItem item={item}  onDelete={handleDeleteExercise} />
+);
+
+
+const handleAddExercise = async (name: String, muscleGroup: String, description: String) => {
+  await addExercise(name, muscleGroup, description)
+}
+
+const handleDeleteExercise = async (id: number) => {
+  console.log("Delete exercise id: ", id)
+  await deleteExercise(id)
+}
 
 
 
   return (
+<GestureHandlerRootView>
     <View style={styles.container}>
         <View style={styles.header}>
             <SearchBar searchPhrase={searchPhrase} setSearchPhrase={setSearchPhrase} setClicked={setClicked} clicked={clicked}/>
@@ -63,20 +97,23 @@ useEffect(() => {
         </ScrollView>
         </View>
       <View style={styles.btnContainer}>
-        <TouchableOpacity style={styles.createBtn}>
+        <TouchableOpacity style={styles.createBtn} onPress={() => setViewModal(true)}>
             <Entypo name="circle-with-plus" size={18} color="#ECBE69" />
             <Text style={styles.createText}>Create New Exercise</Text>
         </TouchableOpacity>
       </View>
-        <ScrollView style={styles.exercisesContainer}>
-          {exercises.map((exercise) => (
-            <TouchableOpacity style={styles.exerciseContainer} key={exercise.id}>  
-              <Text style={styles.exerciseText}>{exercise.name}</Text>
-              <Text style={styles.exerciseCategoryText}>{exercise.muscle_group.toUpperCase()}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <FlatList
+          data={exercises}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+        />
+        <NewExerciseModal
+        isVisible={viewModal}
+        onClose={() => setViewModal(false)}
+        onAddExercise={handleAddExercise}
+      />
     </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -122,19 +159,6 @@ const styles = StyleSheet.create({
     padding: 8,
     flex: 1,
 },
-exerciseContainer: {
-  padding:10,
-  marginTop: 10,
-  borderBottomWidth: 1,
-  borderBottomColor: "#E5E5E5",
-},
-exerciseText: {
-  fontSize: 16,
-  fontWeight: '500',
-},
 
-exerciseCategoryText: {
-  color: '#8B8989',
-  fontWeight: 'bold',
-}
+
 });

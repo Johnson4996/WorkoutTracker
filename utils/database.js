@@ -84,6 +84,7 @@ if (count === 0) {
 //   }
 // }
 
+
 const fetchExercisesByGroup = async (muscle_group) => {
 
   try{
@@ -96,34 +97,40 @@ const fetchExercisesByGroup = async (muscle_group) => {
   }
 };
 
+const addExercise = async (name, muscle_group, desc) => {
 
-export { initDatabase, fetchExercisesByGroup };
+    try{
+      await getDatabase()
+      const result = db.runAsync(`INSERT INTO Exercises (name, muscle_group, description) VALUES (?, ?, ?)`, [name, muscle_group, desc]);
+      const newExercise = await db.getAllAsync('SELECT * FROM Exercises WHERE name = ?', [name]);
+      const newExerciseId = result.lastInsertRowId;
+      console.log("Exercise added successfully", newExercise, newExerciseId);
+      return newExerciseId
+      
+    }catch(error){
+      console.log("Error adding exercise")
+    }
+}
+
+const deleteExercise = async (id) => {
+  try{
+    await getDatabase()
+    const result = await db.runAsync(`DELETE FROM Exercises WHERE id = ?`, [id]);
+    console.log("Exercise deleted successfully", result);
+  }catch(error){
+    console.log("Error deleting exercise", error)
+  }
+}
+
+
+export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise };
 
 
 
 
-// const addExercise = () => {
-//     db.transaction((tx) => {
-//         tx.executeSql(
-//             'INSERT INTO Exercises (id, name, muscle_group, description) VALUES (?, ?, ?, ?)',
-//             [exercise.id, exercise.name, exercise.muscle_group, exercise.desc],
-//             () => { console.log('Exercise inserted successfully'); },
-//             error => { console.log('Error inserting exercise: ' + error.message); }
-        
-//         )
-//     })
-// }
 
-// const deleteExercise = (id) => {
-//     db.transaction((tx) => {
-//         tx.executeSql(
-//             'DELETE FROM Exercises WHERE id = ?',
-//             [id],
-//             () => { console.log('Exercise deleted successfully'); },
-//             error => { console.log('Error deleting exercise: ' + error.message); }
-//         )
-//     })
-// }
+
+
 
 
 //   export { initializeDatabase, fetchExercises, addExercise, deleteExercise, fetchExercisesByGroup };
