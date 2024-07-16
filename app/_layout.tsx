@@ -24,7 +24,16 @@ export default function RootLayout() {
         name="add-exercise"
         options={{
           title: 'Exercises',
-          headerBackTitleVisible: false, // Hide the back button title
+          headerBackTitleVisible: false, 
+          headerShadowVisible: false,
+          headerTintColor: '#191818',
+        }}
+        />
+        <Stack.Screen
+        name="log-exercise"
+        options={{
+          title: 'LogExercise',
+          headerBackTitleVisible: false, 
           headerShadowVisible: false,
           headerTintColor: '#191818',
         }}

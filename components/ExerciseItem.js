@@ -4,8 +4,11 @@
 import { useRef } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
+import { useNavigation } from "expo-router";
 
 export default function ExerciseItem({ item, onDelete }) {
+
+  const navigation = useNavigation()
 
   let row = [];
   let prevOpenedRow = useRef(null);
@@ -24,10 +27,6 @@ export default function ExerciseItem({ item, onDelete }) {
       extrapolate: 'clamp',
     });
 
-    const opacity = progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 1],
-    });
     return(
       <Animated.View style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}>
         <TouchableOpacity onPress={() => onDelete(item.id)}>
@@ -44,7 +43,7 @@ export default function ExerciseItem({ item, onDelete }) {
       ref={(ref) => (row.current = ref)}
       rightOpenValue = {-100}
       >
-        <TouchableOpacity style={styles.exerciseContainer} >
+        <TouchableOpacity style={styles.exerciseContainer} onPress={() => navigation.navigate('log-exercise', {id: item.id, name: item.name})}>
             <Text style={styles.exerciseText}>{item.name}</Text>
             <Text style={styles.exerciseCategoryText}>{item.muscle_group.toUpperCase()}</Text>
         </TouchableOpacity>

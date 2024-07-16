@@ -1,6 +1,7 @@
 //TODO: Add success popup when successfully added exercise
 //TODO: Add error popup when error adding exercise
 //TODO: Fix padding at bottom when scrolling exercises
+//TODO: Implement search
 
 import SearchBar from '@/components/SearchBar';
 import React, { useEffect, useState } from 'react';
@@ -158,6 +159,8 @@ const styles = StyleSheet.create({
   exercisesContainer: {
     padding: 8,
     flex: 1,
+},
+scrollItemSelected: {
 },
 
 
