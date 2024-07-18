@@ -18,31 +18,38 @@ const initDatabase = async () => {
 
 try{
   await db.execAsync(`
-    CREATE TABLE IF NOT EXISTS Exercises (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    name TEXT NOT NULL, 
-    muscle_group TEXT, 
-    description TEXT
-    );
-    CREATE TABLE IF NOT EXISTS Workout (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      description TEXT,
-      created_at TEXT,
-      updated_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS WorkoutExercise (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      workout_id INTEGER,
-      exercise_id INTEGER,
-      sets INTEGER,
-      reps INTEGER,
-      duration INTEGER,
-      order_num INTEGER,
-      FOREIGN KEY (workout_id) REFERENCES Workout(id),
-      FOREIGN KEY (exercise_id) REFERENCES Exercise(id)
-    );
-    `);
+  CREATE TABLE IF NOT EXISTS Exercises (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  muscle_group TEXT,
+  description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Workouts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  date DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS WorkoutExercises (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  workout_id INTEGER NOT NULL,
+  exercise_id INTEGER NOT NULL,
+  FOREIGN KEY (workout_id) REFERENCES Workouts(id),
+  FOREIGN KEY (exercise_id) REFERENCES Exercises(id)
+);
+
+CREATE TABLE IF NOT EXISTS Sets (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  workout_exercise_id INTEGER NOT NULL,
+  weight REAL NOT NULL,
+  reps INTEGER NOT NULL,
+  "order" INTEGER NOT NULL,
+  FOREIGN KEY (workout_exercise_id) REFERENCES WorkoutExercises(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_workout_exercises_workout_id ON WorkoutExercises (workout_id);
+CREATE INDEX IF NOT EXISTS idx_workout_exercises_exercise_id ON WorkoutExercises (exercise_id);
+CREATE INDEX IF NOT EXISTS idx_sets_workout_exercise_id ON Sets (workout_exercise_id);`);
     console.log("Database initialized and tables created");
 } catch (error) {
   console.error('Error initializing database:', error);
@@ -144,6 +151,7 @@ const addWorkoutExercise = async (workout_id, exercise_id) => {
     await getDatabase()
     const result = await db.runAsync(`INSERT INTO WorkoutExercises (workout_id, exercise_id) VALUES (?, ?)`, [workout_id, exercise_id]);
     console.log("Workout exercise added successfully", result);
+    return result.lastInsertRowId;
   }catch(error){
     console.log("Error adding workout exercise", error)
   }
@@ -174,26 +182,29 @@ const getWorkoutsForDay = async (date) => {
   
   try {
     await getDatabase();
+    // const all = await db.getAllAsync('SELECT * FROM Sets');
+    // console.log("all sets", all);
 
     const result = await db.getAllAsync(`
       SELECT
-        w.id AS workout_id,
-        e.name AS exercise_name,
-        s.weight,
-        s.reps,
-        s."order"
-      FROM
-        Workouts w
-      JOIN
-        WorkoutExercises we ON w.id = we.workout_id
-      JOIN
-        Exercises e ON we.exercise_id = e.id
-      LEFT JOIN
-        Sets s ON s.workout_exercise_id = we.id
-      WHERE
-        w.date = ?
-      ORDER BY
-        w.id, e.name, s."order"
+    w.id AS workout_id,
+    e.name AS exercise_name,
+    we.id AS workout_exercise_id,
+    s.weight,
+    s.reps,
+    s."order"
+FROM
+    Workouts w
+JOIN
+    WorkoutExercises we ON w.id = we.workout_id
+JOIN
+    Exercises e ON we.exercise_id = e.id
+LEFT JOIN
+    Sets s ON s.workout_exercise_id = we.id
+WHERE
+    w.date = ?
+ORDER BY
+    w.id, e.name, s."order"
     `, [date]);
 
     return result;

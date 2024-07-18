@@ -31,8 +31,9 @@ export default function LogExerciseScreen() {
         navigation.setOptions({ title: exerciseName });
       }, [navigation]);
     
-      const handleSaveSet = async (workoutExerciseId:number, weight:number, reps:number) => {
-        await addWorkoutExercise(workoutExerciseId, exerciseId)
+      const handleSaveSet = async ( workoutExerciseId: number,weight:number, reps:number) => {
+        console.log(weight, reps)
+        console.log("WE ID:", workoutExerciseId)
         await addSet(workoutExerciseId, weight, reps);
       };
 
@@ -79,9 +80,10 @@ export default function LogExerciseScreen() {
           <>
               <SetsList sets={sets} />
                   <SafeAreaView style={styles.saveBtnContainer}>
-                  <TouchableOpacity style={styles.saveBtn} onPress={() =>{
+                  <TouchableOpacity style={styles.saveBtn} onPress={async () =>{
+                      const workoutExerciseId = await addWorkoutExercise(workoutId, exerciseId)
                       sets.forEach(async (set) => {
-                          await handleSaveSet(parseInt(exerciseId), set.weight, set.reps);
+                          await handleSaveSet(workoutExerciseId,set.weight, set.reps);
                           console.log("Set saved successfully", set);
                       })
                       navigation.navigate('index');

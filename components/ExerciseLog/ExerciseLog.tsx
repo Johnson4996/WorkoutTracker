@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View,Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from "expo-router";
+import { getWorkoutsForDay } from "@/utils/database";
 
 
 const ExerciseLog = () => {
     const navigation = useNavigation();
+
+    const [workouts, setWorkouts] = useState([]);
+
+    useEffect(() => {
+      const loadWorkouts = async () => {
+        try {
+          const date = new Date().toISOString().split('T')[0]; 
+          const results = await getWorkoutsForDay(date);
+        console.log(results)
+          setWorkouts(results);
+        } catch (error) {
+          console.log("Error loading workouts", error);
+        }
+      };
+  
+      loadWorkouts();
+      
+    }, []);
+
     return (
         <View style={styles.container}>
             <Text style={styles.startText}>Tap "Add Exercise" to Start a New Log</Text>
