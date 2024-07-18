@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation } from "expo-router";
+import { createOrGetWorkout } from '@/utils/database';
 
 export default function ExerciseItem({ item, onDelete }) {
 
@@ -19,6 +20,16 @@ export default function ExerciseItem({ item, onDelete }) {
 
     prevOpenedRow.current = row.current;
   }
+
+  const handleCreateWorkout = async () => {
+    try {
+      const workoutId = await createOrGetWorkout();
+      return workoutId;
+    } catch (error) {
+      console.error("Error creating workout:", error);
+      throw error; 
+    }
+  };
 
   const renderRightView = (onDelete,progress, dragX) => {
     const trans = dragX.interpolate({
@@ -43,7 +54,18 @@ export default function ExerciseItem({ item, onDelete }) {
       ref={(ref) => (row.current = ref)}
       rightOpenValue = {-100}
       >
-        <TouchableOpacity style={styles.exerciseContainer} onPress={() => navigation.navigate('log-exercise', {id: item.id, name: item.name})}>
+        <TouchableOpacity style={styles.exerciseContainer} onPress={async () => {
+              try {
+                const workoutId = await handleCreateWorkout();
+                navigation.navigate('log-exercise', {
+                  workoutId: workoutId,
+                  exerciseId: item.id, 
+                  exerciseName: item.name
+                });
+              } catch (error) {
+                console.error("Error handling workout creation:", error);
+              }
+          }}>
             <Text style={styles.exerciseText}>{item.name}</Text>
             <Text style={styles.exerciseCategoryText}>{item.muscle_group.toUpperCase()}</Text>
         </TouchableOpacity>

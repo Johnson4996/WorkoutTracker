@@ -71,20 +71,6 @@ if (count === 0) {
   }
 }
 
-
-
-// const fetchExercises = async () => {
-//   try{
-//     const db = await SQLite.openDatabase(DATABASE_NAME);
-//     const result = await db.execAsync('SELECT * FROM Exercise');
-//     return result.rows
-//   } catch (error) {
-//     console.error('Error fetching exercises:', error);
-//     throw error;
-//   }
-// }
-
-
 const fetchExercisesByGroup = async (muscle_group) => {
 
   try{
@@ -122,8 +108,106 @@ const deleteExercise = async (id) => {
   }
 }
 
+const createOrGetWorkout = async () => {
+  const date = new Date().toISOString().split('T')[0];
+  
+  try {
+    await getDatabase();
+    
+    const existingWorkout = await db.getFirstAsync(
+      'SELECT id FROM Workouts WHERE date = ?',
+      [date]
+    );
 
-export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise };
+    if (existingWorkout) {
+      console.log("Workout accessed successfully");
+      return existingWorkout.id;
+    } else {
+      const result = await db.runAsync(
+        'INSERT INTO Workouts (date) VALUES (?)',
+        [date]
+      );
+      const newWorkoutId = result.lastInsertRowId;
+      console.log("Workout created successfully");
+      return newWorkoutId;
+    }
+    
+  } catch (error) {
+    console.log("Error creating/getting workout", error);
+    throw error;
+  }
+};
+
+const addWorkoutExercise = async (workout_id, exercise_id) => {
+  
+  try{
+    await getDatabase()
+    const result = await db.runAsync(`INSERT INTO WorkoutExercises (workout_id, exercise_id) VALUES (?, ?)`, [workout_id, exercise_id]);
+    console.log("Workout exercise added successfully", result);
+  }catch(error){
+    console.log("Error adding workout exercise", error)
+  }
+}
+
+const addSet = async (workout_exercise_id, weight, reps) => {
+  
+  try{
+    await getDatabase()
+    await db.runAsync(`
+      INSERT INTO Sets (workout_exercise_id, weight, reps, "order")
+  VALUES (
+    ?,
+    ?,
+    ?,
+    (SELECT COALESCE(MAX("order"), 0) + 1
+     FROM Sets
+     WHERE workout_exercise_id = ?)
+  );
+`, [workout_exercise_id, weight, reps, workout_exercise_id]);
+  }catch(error){
+    console.log("Error adding set", error)
+  }
+}
+
+
+const getWorkoutsForDay = async (date) => {
+  
+  try {
+    await getDatabase();
+
+    const result = await db.getAllAsync(`
+      SELECT
+        w.id AS workout_id,
+        e.name AS exercise_name,
+        s.weight,
+        s.reps,
+        s."order"
+      FROM
+        Workouts w
+      JOIN
+        WorkoutExercises we ON w.id = we.workout_id
+      JOIN
+        Exercises e ON we.exercise_id = e.id
+      LEFT JOIN
+        Sets s ON s.workout_exercise_id = we.id
+      WHERE
+        w.date = ?
+      ORDER BY
+        w.id, e.name, s."order"
+    `, [date]);
+
+    return result;
+  } catch (error) {
+    console.error("Error getting workouts for day:", error);
+  }
+};
+
+
+
+
+
+
+export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise, createOrGetWorkout, addWorkoutExercise, addSet, getWorkoutsForDay };
 
 
 
@@ -133,6 +217,9 @@ export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise };
 
 
 
-//   export { initializeDatabase, fetchExercises, addExercise, deleteExercise, fetchExercisesByGroup };
+
+
+
+
 
 

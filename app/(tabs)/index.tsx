@@ -3,8 +3,29 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts, Lexend_400Regular, Lexend_700Bold } from '@expo-google-fonts/lexend';
 import { Platform, StyleSheet, View, StatusBar } from "react-native";
 import ExerciseLog from "@/components/ExerciseLog/ExerciseLog";
+import { useEffect, useState } from "react";
+import { getWorkoutsForDay } from "@/utils/database";
 
 export default function HomeScreen() {
+
+  const [workouts, setWorkouts] = useState([]);
+
+  useEffect(() => {
+    const loadWorkouts = async () => {
+      try {
+        const date = new Date().toISOString().split('T')[0]; 
+        const results = await getWorkoutsForDay(date);
+        console.log(results)
+        setWorkouts(results);
+      } catch (error) {
+        console.log("Error loading workouts", error);
+      }
+    };
+
+    loadWorkouts();
+    
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.statusBarBackground}/>
