@@ -1,13 +1,15 @@
 
 //TODO: Add non bold lbs to weight counter
+//TODO: Remove 0 when user is entering value
+//TODO: Fix navigation here .jumpTo?
 
 import SetsList from '@/components/LogExercise/SetsList';
 import { addSet, addWorkoutExercise } from '@/utils/database';
 import { Entypo } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
-import react, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
 type LogExerciseScreenParams = {
@@ -32,8 +34,6 @@ export default function LogExerciseScreen() {
       }, [navigation]);
     
       const handleSaveSet = async ( workoutExerciseId: number,weight:number, reps:number) => {
-        console.log(weight, reps)
-        console.log("WE ID:", workoutExerciseId)
         await addSet(workoutExerciseId, weight, reps);
       };
 
@@ -78,7 +78,9 @@ export default function LogExerciseScreen() {
       {
           sets.length > 0 ? 
           <>
+          <ScrollView>
               <SetsList sets={sets} />
+          </ScrollView>
                   <SafeAreaView style={styles.saveBtnContainer}>
                   <TouchableOpacity style={styles.saveBtn} onPress={async () =>{
                       const workoutExerciseId = await addWorkoutExercise(workoutId, exerciseId)

@@ -8,46 +8,67 @@ interface Set {
 
 const SetsList = ({ sets }: { sets: Set[] }) => {
   return (
-    <FlatList
-      data={sets}
-      renderItem={({ item, index }) => (
-        <View style={styles.setContainer}>
-          <View style={styles.setNumber}>
-            <Text style={styles.setNumberText}>{index + 1}</Text>
-          </View>
-          <Text style={styles.setText}>{item.weight} lbs</Text>
-          <Text style={styles.setText}>{item.reps} reps</Text>
+    <View style={styles.setListContainer}>
+      {sets.map((set, index) => (
+        <View key={index} style={styles.setContainer}>
+            <View style={styles.setNumberContainer}>
+              <View style={styles.setNumber}>
+                <Text style={styles.setNumberText}>{index + 1}</Text>
+              </View>
+              {index < sets.length - 1 && <View style={styles.verticalLine}></View>}
+            </View>
+            <View style={styles.setTextContainer}>
+              <Text style={styles.setText}>{set.weight} lbs</Text>
+              <Text style={styles.setText}>{set.reps} reps</Text>
+            </View>
         </View>
-      )}
-      keyExtractor={(item, index) => index.toString()}
-    />
+      ))}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  setListContainer: {
+    paddingVertical: 10,
+    
+  },
   setContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 0,
-    justifyContent: 'center',
-    marginTop: 30,
+    paddingHorizontal: 40,
+    paddingVertical: 0
+  },
+  setNumberContainer:{
+    marginRight: 70,
   },
   setNumber: {
     backgroundColor: 'black',
-    borderRadius: 8,
-    padding: 12,
-    marginRight: 10,
+    borderRadius: 3,
+    padding: 6,
+    zIndex: 1
   },
   setNumberText: {
     color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16
+    fontWeight: '900',
+    fontSize: 12
+  },
+  setTextContainer:{
+    flexDirection: "row",
   },
   setText: {
-    marginRight: 20,
-    fontSize: 18,
+    marginRight: 50,
+    fontSize: 15,
+  },
+  verticalLine: {
+    width: 3,
+    height: 20,
+    backgroundColor: 'black',
+    marginTop: 0,
+    marginLeft: 9,
+    position: 'absolute',
+    top:25,
+    zIndex: 0
   },
 });
 
