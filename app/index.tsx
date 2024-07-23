@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { SplashScreen } from "expo-router"
 import { Redirect } from "expo-router"
-import {initDatabase} from "../utils/database.js"
+import {createOrGetWorkout, initDatabase} from "../utils/database.js"
 
 export default function Index() {
 const [databaseInitialized, setDatabaseInitialized] = React.useState(false)

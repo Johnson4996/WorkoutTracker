@@ -5,13 +5,14 @@
 
 import SearchBar from '@/components/SearchBar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList, SafeAreaView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { addExercise, deleteExercise, fetchExercisesByGroup } from '@/utils/database';
 import NewExerciseModal from '@/components/NewExerciseModal';
 import ExerciseItem from '@/components/ExerciseItem';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+
 
 
 interface Exercise {
@@ -29,6 +30,7 @@ const [clicked, setClicked] = useState(false);
 const [activeTab, setActiveTab] = useState("chest");
 const [exercises, setExercises] = useState([]);
 const [viewModal, setViewModal] = useState(false);
+
 
 useEffect(() => {
   const fetchExercises = async () => {
@@ -49,11 +51,11 @@ useEffect(() => {
 
 
 const renderItem = ({ item }: { item: Exercise }) => (
-  <ExerciseItem item={item}  onDelete={handleDeleteExercise} />
+  <ExerciseItem item={item} onDelete={handleDeleteExercise} />
 );
 
 
-const handleAddExercise = async (name: String, muscleGroup: String, description: String) => {
+const handleAddExercise = async (name: string, muscleGroup: string, description: string) => {
   await addExercise(name, muscleGroup, description)
 }
 
@@ -66,7 +68,7 @@ const handleDeleteExercise = async (id: number) => {
 
   return (
 <GestureHandlerRootView>
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
         <View style={styles.header}>
             <SearchBar searchPhrase={searchPhrase} setSearchPhrase={setSearchPhrase} setClicked={setClicked} clicked={clicked}/>
             <ScrollView horizontal={true} style={styles.scrollView}>
@@ -113,7 +115,7 @@ const handleDeleteExercise = async (id: number) => {
         onClose={() => setViewModal(false)}
         onAddExercise={handleAddExercise}
       />
-    </View>
+    </SafeAreaView>
     </GestureHandlerRootView>
   );
 }

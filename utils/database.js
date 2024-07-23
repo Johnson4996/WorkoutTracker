@@ -1,5 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import exercisesData from '../assets/data/exercises.json';
+import {TODAY_DATE_FORMATTED} from "@/utils/constants";
 
 const DATABASE_NAME = 'workout_app.db';
 let db = null;
@@ -116,8 +117,7 @@ const deleteExercise = async (id) => {
 }
 
 const createOrGetWorkout = async () => {
-  const date = new Date().toISOString().split('T')[0];
-  
+  const date = TODAY_DATE_FORMATTED
   try {
     await getDatabase();
     
@@ -128,6 +128,7 @@ const createOrGetWorkout = async () => {
 
     if (existingWorkout) {
       console.log("Workout accessed successfully");
+      console.log(existingWorkout.id);
       return existingWorkout.id;
     } else {
       const result = await db.runAsync(
@@ -182,8 +183,8 @@ const getWorkoutsForDay = async (date) => {
   
   try {
     await getDatabase();
-    // const all = await db.getAllAsync('SELECT * FROM Sets');
-    // console.log("all sets", all);
+    // const all = await db.getAllAsync('SELECT * FROM Workouts');
+    // console.log("all workouts", all);
 
     const result = await db.getAllAsync(`
       SELECT
@@ -213,12 +214,22 @@ ORDER BY
   }
 };
 
+const getLastWorkout = async () => {
+  try {
+    await getDatabase();
+    const result = await db.getAllAsync('SELECT * FROM Workouts ORDER BY id DESC LIMIT 1');
+    return result[0].date;
+  } catch (error) {
+    console.error("Error getting last workout:", error);
+  }
+};
 
 
 
 
 
-export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise, createOrGetWorkout, addWorkoutExercise, addSet, getWorkoutsForDay };
+
+export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise, createOrGetWorkout, addWorkoutExercise, addSet, getWorkoutsForDay, getLastWorkout };
 
 
 

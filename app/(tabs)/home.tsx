@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts, Lexend_400Regular, Lexend_700Bold } from '@expo-google-fonts/lexend';
 import { Platform, StyleSheet, View, StatusBar } from "react-native";
 import ExerciseLog from "@/components/ExerciseLog/ExerciseLog";
+import { DateProvider } from "@/utils/DateContext";
 
 
 export default function HomeScreen() {

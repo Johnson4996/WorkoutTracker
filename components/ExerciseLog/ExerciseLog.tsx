@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View,Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from "expo-router";
-import { getWorkoutsForDay } from "@/utils/database";
+import { getLastWorkout, getWorkoutsForDay } from "@/utils/database";
 import SetsList from "../LogExercise/SetsList";
+import {TODAY_DATE_FORMATTED} from "@/utils/constants";
+import { useDate } from "@/utils/DateContext";
+import { useFocusEffect } from "@react-navigation/native";
+
 
 type Workout = {
     exercise_name: string;
@@ -26,41 +30,45 @@ const ExerciseLog = () => {
     const navigation = useNavigation();
 
     const [workouts, setWorkouts] = useState<DayWorkouts[]>([])
+    const [lastWorkout, setLastWorkout] = useState<string>();
+    const {selectedDate} = useDate();
 
-    useEffect(() => {
-      const loadWorkouts = async () => {
-        try {
-          const date = new Date().toISOString().split('T')[0]; 
-          const results = await getWorkoutsForDay(date);
-          
-          
-            const dayWorkouts = Array<DayWorkouts>();
-            results.forEach((workout:Workout) => {
+    useFocusEffect(
+        useCallback(() => {
+          const loadWorkouts = async () => {
+            try {
+              const date = selectedDate.toISOString().split('T')[0]||TODAY_DATE_FORMATTED; 
+              const lastWorkout = await getLastWorkout();
+              setLastWorkout(lastWorkout);
+              const results = await getWorkoutsForDay(date);
+              
+              const dayWorkouts: DayWorkouts[] = [];
+              results.forEach((workout: Workout) => {
                 let exercise = dayWorkouts.find((dw) => dw.exercise_name === workout.exercise_name);
-                if(!exercise) {
-                    exercise = {
-                        exercise_name: workout.exercise_name,
-                        sets: [],
-                        order: workout.order
-                    };
-                    dayWorkouts.push(exercise);
+                if (!exercise) {
+                  exercise = {
+                    exercise_name: workout.exercise_name,
+                    sets: [],
+                    order: workout.order
+                  };
+                  dayWorkouts.push(exercise);
                 }
-                if(workout.order != null){
-                    exercise.sets.push({
-                        weight: workout.weight,
-                        reps: workout.reps
-                    });
+                if (workout.order != null) {
+                  exercise.sets.push({
+                    weight: workout.weight,
+                    reps: workout.reps
+                  });
                 }
-          })
-          setWorkouts(dayWorkouts);
-        } catch (error) {
-          console.log("Error loading workouts", error);
-        }
-      };
-  
-      loadWorkouts();
-      
-    }, []);
+              });
+              setWorkouts(dayWorkouts);
+            } catch (error) {
+              console.log("Error loading workouts", error);
+            }
+          };
+    
+          loadWorkouts();
+        }, [selectedDate])
+      );
 
 
     const renderDayWorkouts = () => {
@@ -72,6 +80,7 @@ const ExerciseLog = () => {
                     <View style={styles.workoutCardHeader}>
                         <Text style={{fontWeight: 'bold', fontSize: 15}}>{workout.exercise_name}</Text>
                     <TouchableOpacity>
+                        {/* TODO: add functionality for edit/delete card */}
                         <Entypo name="dots-three-vertical" size={18} color="black"/>
                     </TouchableOpacity>
                     </View>
@@ -79,11 +88,6 @@ const ExerciseLog = () => {
                 </View>
             ))}
         </ScrollView>
-        <TouchableOpacity 
-        style={styles.addBtnWorkouts}
-        onPress={() => navigation.navigate('add-exercise')}>
-            <Entypo style={styles.addBtnWorkouts} name="circle-with-plus" size={60} color="#ECBE69" /> 
-        </TouchableOpacity>
         </View>
         )
     }
@@ -92,10 +96,10 @@ const ExerciseLog = () => {
         return(
             <View style={styles.container}>
             <Text style={styles.startText}>Tap "Add Exercise" to Start a New Log</Text>
-            <Text style={styles.noExerciseText}>Last Workout: June 17th, 2024</Text>
+            <Text style={styles.noExerciseText}>Last Workout: {lastWorkout}</Text>
             <TouchableOpacity 
             style={styles.addBtn}
-            onPress={() => navigation.navigate('add-exercise')}>
+            onPress={() => navigation.navigate('exercises')}>
                 <Entypo name="circle-with-plus" size={15} color="#ECBE69" /> 
                 <Text style={styles.btnText}>Add Exercise</Text>
             </TouchableOpacity>
@@ -139,7 +143,7 @@ btnText: {
     color: "#FFFFFF",
 },
 addBtnWorkouts:{
-alignSelf: "flex-end",
+    
 },
 workoutCard: {
     backgroundColor: "#FFFFFF",

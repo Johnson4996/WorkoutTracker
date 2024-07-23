@@ -6,12 +6,26 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "jsx": "react-native",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es6", "dom", "esnext"],
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "utils/database.js", "components/ExerciseItem.js"  ]
+    "expo-env.d.ts",
+    "utils/database.js",
+    "components/ExerciseItem.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

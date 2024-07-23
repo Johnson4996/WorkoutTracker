@@ -18,8 +18,12 @@ const SetsList = ({ sets }: { sets: Set[] }) => {
               {index < sets.length - 1 && <View style={styles.verticalLine}></View>}
             </View>
             <View style={styles.setTextContainer}>
-              <Text style={styles.setText}>{set.weight} lbs</Text>
-              <Text style={styles.setText}>{set.reps} reps</Text>
+            <Text style={styles.setText}>
+              <Text style={styles.boldText}>{set.weight} </Text> lbs
+            </Text>
+            <Text style={styles.setText}>
+              <Text style={styles.boldText}>{set.reps} </Text> reps
+            </Text>
             </View>
         </View>
       ))}
@@ -52,6 +56,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '900',
     fontSize: 12
+  },
+  boldText: {
+    fontWeight: 'bold',
+    fontSize: 20
   },
   setTextContainer:{
     flexDirection: "row",

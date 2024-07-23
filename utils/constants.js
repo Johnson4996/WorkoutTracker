@@ -1,0 +1,1 @@
+export const TODAY_DATE_FORMATTED = new Date().toISOString().split('T')[0];

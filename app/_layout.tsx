@@ -1,3 +1,4 @@
+import { DateProvider } from "@/utils/DateContext";
 import { Lexend_400Regular, Lexend_700Bold } from "@expo-google-fonts/lexend";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
@@ -18,17 +19,9 @@ export default function RootLayout() {
     SplashScreen.hideAsync();
   }
   return (
+    <DateProvider>
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="add-exercise"
-        options={{
-          title: 'Exercises',
-          headerBackTitleVisible: false, 
-          headerShadowVisible: false,
-          headerTintColor: '#191818',
-        }}
-        />
         <Stack.Screen
         name="log-exercise"
         options={{
@@ -40,6 +33,7 @@ export default function RootLayout() {
         />
       {/* <Stack.Screen name="not-found" /> */}
     </Stack>
+    </DateProvider>
 
   
   );
