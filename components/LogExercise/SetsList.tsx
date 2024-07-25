@@ -1,3 +1,5 @@
+//TODO: right side cutoff on iphone 15 pro with cards
+
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 

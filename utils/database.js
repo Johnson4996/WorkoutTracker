@@ -218,9 +218,52 @@ const getLastWorkout = async () => {
   try {
     await getDatabase();
     const result = await db.getAllAsync('SELECT * FROM Workouts ORDER BY id DESC LIMIT 1');
-    return result[0].date;
+    if(!result[0]){
+      return null
+    } else{
+      return result[0].date;
+    }
+    
   } catch (error) {
     console.error("Error getting last workout:", error);
+  }
+};
+
+const deleteWorkoutExercise = async (workoutExerciseId) => {
+  try {
+    const db = await getDatabase();
+    
+    // Get the workout_id before deleting
+    const workout = await db.getFirstAsync(`
+      SELECT workout_id FROM WorkoutExercises WHERE id = ?
+    `, [workoutExerciseId]);
+    const workoutId = workout.workout_id;
+    
+    // Delete related sets
+    await db.runAsync(`
+      DELETE FROM Sets WHERE workout_exercise_id = ?
+    `, [workoutExerciseId]);
+    
+    // Delete the specific workout exercise
+    await db.runAsync(`
+      DELETE FROM WorkoutExercises WHERE id = ?
+    `, [workoutExerciseId]);
+
+    // Check if there are any other exercises for this workout
+    const remainingExercises = await db.getAllAsync(`
+      SELECT id FROM WorkoutExercises WHERE workout_id = ?
+    `, [workoutId]);
+    
+    // If no remaining exercises, delete the workout
+    if (remainingExercises.length === 0) {
+      await db.runAsync(`
+        DELETE FROM Workouts WHERE id = ?
+      `, [workoutId]);
+    }
+
+    console.log(`Workout exercise with id ${workoutExerciseId} deleted successfully`);
+  } catch (error) {
+    console.error("Error deleting workout exercise:", error);
   }
 };
 
@@ -229,7 +272,7 @@ const getLastWorkout = async () => {
 
 
 
-export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise, createOrGetWorkout, addWorkoutExercise, addSet, getWorkoutsForDay, getLastWorkout };
+export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise, createOrGetWorkout, addWorkoutExercise, addSet, getWorkoutsForDay, getLastWorkout, deleteWorkoutExercise };
 
 
 

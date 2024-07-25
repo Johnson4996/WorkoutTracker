@@ -1,3 +1,5 @@
+
+//TODO: add dropdown for muscle group
 import React, { useState } from "react";
 import {  Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 

@@ -94,7 +94,6 @@ export default function LogExerciseScreen() {
                       const workoutExerciseId = await addWorkoutExercise(workoutId, exerciseId)
                       sets.forEach(async (set) => {
                           await handleSaveSet(workoutExerciseId,set.weight, set.reps);
-                          console.log("Set saved successfully", set);
                       })
                       navigation.navigate('home');
                   }}>

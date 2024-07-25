@@ -1,7 +1,9 @@
+//TODO: Add splash screen
+//TODO: fix white page index routing issue on start
 import React, { useEffect } from "react"
 import { SplashScreen } from "expo-router"
 import { Redirect } from "expo-router"
-import {createOrGetWorkout, initDatabase} from "../utils/database.js"
+import { initDatabase} from "../utils/database.js"
 
 export default function Index() {
 const [databaseInitialized, setDatabaseInitialized] = React.useState(false)
@@ -25,5 +27,5 @@ useEffect(() => {
 if (!databaseInitialized) {
   return null
 }
-  return <Redirect href="/(tabs)" />
+  return <Redirect href="/(tabs)/home" />
 }

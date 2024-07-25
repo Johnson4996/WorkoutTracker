@@ -31,6 +31,15 @@ export default function RootLayout() {
           headerTintColor: '#191818',
         }}
         />
+        <Stack.Screen
+        name="calendar-exercises"
+        options={{
+          title: 'CalendarExercises',
+          headerBackTitleVisible: false, 
+          headerShadowVisible: false,
+          headerTintColor: '#191818',
+        }}
+        />
       {/* <Stack.Screen name="not-found" /> */}
     </Stack>
     </DateProvider>

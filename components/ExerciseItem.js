@@ -1,5 +1,5 @@
 //TODO: Add error popup when error deleting exercise
-//TODO: figure out how to reset first delete when swiping a second delete, code is somewhat there, just not working
+
 
 import { useRef } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, Animated } from 'react-native';

@@ -1,11 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { View,Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View,Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from "expo-router";
-import { getLastWorkout, getWorkoutsForDay } from "@/utils/database";
+import { deleteWorkoutExercise, getLastWorkout, getWorkoutsForDay } from "@/utils/database";
 import SetsList from "../LogExercise/SetsList";
-import {TODAY_DATE_FORMATTED} from "@/utils/constants";
-import { useDate } from "@/utils/DateContext";
 import { useFocusEffect } from "@react-navigation/native";
 
 
@@ -14,6 +12,7 @@ type Workout = {
     order: number;
     reps: number;
     weight: number;
+    workout_exercise_id: number;
 }
 
 type Set = {
@@ -25,19 +24,21 @@ type DayWorkouts = {
     exercise_name: string;
     sets: Array<Set>;
     order: number;
+    we_id: number;
 }
-const ExerciseLog = () => {
+const ExerciseLog = (selectedDate: {date: string}) => {
     const navigation = useNavigation();
 
     const [workouts, setWorkouts] = useState<DayWorkouts[]>([])
     const [lastWorkout, setLastWorkout] = useState<string>();
-    const {selectedDate} = useDate();
+    const [deletedWorkout, setDeletedWorkout] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
           const loadWorkouts = async () => {
             try {
-              const date = selectedDate.toISOString().split('T')[0]||TODAY_DATE_FORMATTED; 
+              const date = selectedDate.date
+              console.log("selectedDate", date) 
               const lastWorkout = await getLastWorkout();
               setLastWorkout(lastWorkout);
               const results = await getWorkoutsForDay(date);
@@ -49,7 +50,8 @@ const ExerciseLog = () => {
                   exercise = {
                     exercise_name: workout.exercise_name,
                     sets: [],
-                    order: workout.order
+                    order: workout.order,
+                    we_id: workout.workout_exercise_id
                   };
                   dayWorkouts.push(exercise);
                 }
@@ -61,13 +63,14 @@ const ExerciseLog = () => {
                 }
               });
               setWorkouts(dayWorkouts);
+              setDeletedWorkout(false);
             } catch (error) {
               console.log("Error loading workouts", error);
             }
           };
     
           loadWorkouts();
-        }, [selectedDate])
+        }, [selectedDate, deletedWorkout])
       );
 
 
@@ -79,8 +82,28 @@ const ExerciseLog = () => {
                 <View style={styles.workoutCard}key={index}>
                     <View style={styles.workoutCardHeader}>
                         <Text style={{fontWeight: 'bold', fontSize: 15}}>{workout.exercise_name}</Text>
-                    <TouchableOpacity>
-                        {/* TODO: add functionality for edit/delete card */}
+                    <TouchableOpacity onPress={ async () =>{
+                        Alert.alert(
+                            'Delete Workout',
+                            'Are you sure you want to delete this exercise?',
+                            [
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                {
+                                    text: 'Delete',
+                                    onPress: async () => {
+                                        await deleteWorkoutExercise(workout.we_id);
+                                        setDeletedWorkout(true);
+                                    },
+                                    style: 'destructive',
+                                },
+                            ],
+                        )
+                    }}>
+                        {/* TODO: add functionality for edit card */}
                         <Entypo name="dots-three-vertical" size={18} color="black"/>
                     </TouchableOpacity>
                     </View>

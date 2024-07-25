@@ -1,6 +1,5 @@
 //TODO: Add success popup when successfully added exercise
 //TODO: Add error popup when error adding exercise
-//TODO: Fix padding at bottom when scrolling exercises
 //TODO: Implement search
 
 import SearchBar from '@/components/SearchBar';
