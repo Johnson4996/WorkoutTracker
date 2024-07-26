@@ -31,7 +31,6 @@ Workout Tracker is a simple way to keep track of your workouts.
     npm run ios
    ```
 
-In the output, you'll find options to open the app in a
 
 
 
