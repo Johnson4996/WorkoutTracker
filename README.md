@@ -1,8 +1,23 @@
-# Welcome to your Expo app 👋
+## Workout Tracker iOS application
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Workout Tracker is a simple way to keep track of your workouts.
 
-## Get started
+# Users are able to:
+
+- Select from the pre-loaded workouts, or add their own
+- Add weight/reps per set for the exercise as they complete the workout
+- Save the exercise to the database and view all workouts for that day
+- View previous days of the week to see what exercises were completed
+- Delete workouts
+- Calendar page to view workouts several months/years in the past
+
+# More features coming soon such as:
+- Change to kgs
+- Edit workouts from the home screen
+- Create routines 
+- Minor UI tweaks, bug fixes, and other enhancements 
+
+## Run Application
 
 1. Install dependencies
 
@@ -13,38 +28,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 2. Start the app
 
    ```bash
-    npx expo start
+    npm run ios
    ```
 
 In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
