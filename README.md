@@ -1,8 +1,8 @@
-## Workout Tracker iOS application
+# Workout Tracker iOS application
 
 Workout Tracker is a simple way to keep track of your workouts.
 
-# Users are able to:
+## Users are able to:
 
 - Select from the pre-loaded workouts, or add their own
 - Add weight/reps per set for the exercise as they complete the workout
@@ -11,7 +11,7 @@ Workout Tracker is a simple way to keep track of your workouts.
 - Delete workouts
 - Calendar page to view workouts several months/years in the past
 
-# More features coming soon such as:
+## More features coming soon such as:
 - Change to kgs
 - Edit workouts from the home screen
 - Create routines 
@@ -31,7 +31,6 @@ Workout Tracker is a simple way to keep track of your workouts.
     npm run ios
    ```
 
-In the output, you'll find options to open the app in a
 
 
 
