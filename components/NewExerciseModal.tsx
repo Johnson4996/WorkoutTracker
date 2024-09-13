@@ -1,8 +1,8 @@
 
-//TODO: add dropdown for muscle group
 import React, { useState } from "react";
-import {  Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
-
+import {  Button, StyleSheet, Text, TextInput, View } from "react-native";
+import Modal from "react-native-modal";
+import { Dropdown } from "react-native-element-dropdown";
 
 interface NewExerciseModalProps {
     isVisible: boolean;
@@ -15,6 +15,18 @@ const NewExerciseModal: React.FC<NewExerciseModalProps> = ({ isVisible, onClose,
   const [muscleGroup, setMuscleGroup] = useState('');
   const [description, setDescription] = useState('');
 
+
+  const muscleGroups = [
+    { label: 'Chest', value: 'Chest' },
+    { label: 'Biceps', value: 'Biceps' },
+    { label: 'Triceps', value: 'Triceps' },
+    { label: 'Shoulders', value: 'Shoulders' },
+    { label: 'Back', value: 'Back' },
+    { label: 'Legs', value: 'Legs' },
+    { label: 'Abs', value: 'Abs' },
+    { label: 'Other', value: 'Other' },
+  ];
+
   const handleAddExercise = () => {
     onAddExercise(name, muscleGroup, description);
     onClose();
@@ -24,7 +36,7 @@ const NewExerciseModal: React.FC<NewExerciseModalProps> = ({ isVisible, onClose,
   };
 
     return (
-    <Modal visible={isVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal style={styles.modal} isVisible={isVisible} onBackdropPress={onClose} avoidKeyboard={true} onSwipeComplete={onClose}>
         <View style={styles.container}>
         <Text style={styles.title}>Add New Exercise</Text>
         <TextInput
@@ -33,12 +45,23 @@ const NewExerciseModal: React.FC<NewExerciseModalProps> = ({ isVisible, onClose,
           value={name}
           onChangeText={setName}
         />
-        <TextInput
+        <Dropdown
+        style={styles.dropdown}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        containerStyle={styles.containerStyle}
+        data={muscleGroups}
+        placeholder="Select..."
+        labelField="label"
+        valueField="value"
+        onChange={item => setMuscleGroup(item.value)}
+        />
+        {/* <TextInput
           style={styles.input}
           placeholder="Muscle Group"
           value={muscleGroup}
           onChangeText={setMuscleGroup}
-        />
+        /> */}
         {/* npm install react-native-element-dropdown --save */}
         <TextInput
           style={styles.input}
@@ -80,6 +103,34 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 5,
   },
+  dropdown: {
+    height: 40,
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 8,
+    marginBottom: 20,
+  },
+  containerStyle: {
+    maxHeight:200
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  
 })
 
 export default NewExerciseModal;

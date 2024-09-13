@@ -79,12 +79,12 @@ if (count === 0) {
   }
 }
 
-const fetchExercisesByGroup = async (muscle_group) => {
+const getAllExercises = async () => {
 
   try{
     await getDatabase()
-    const result = await db.getAllAsync('SELECT * FROM Exercises WHERE muscle_group = ?', [muscle_group]);
-    return result.sort()
+    const result = await db.getAllAsync('SELECT * FROM Exercises');
+    return result
   } catch (error) {
     console.error('Error fetching exercises:', error);
     throw error;
@@ -272,7 +272,7 @@ const deleteWorkoutExercise = async (workoutExerciseId) => {
 
 
 
-export { initDatabase, fetchExercisesByGroup, addExercise, deleteExercise, createOrGetWorkout, addWorkoutExercise, addSet, getWorkoutsForDay, getLastWorkout, deleteWorkoutExercise };
+export { initDatabase, getAllExercises, addExercise, deleteExercise, createOrGetWorkout, addWorkoutExercise, addSet, getWorkoutsForDay, getLastWorkout, deleteWorkoutExercise };
 
 
 

@@ -3,7 +3,7 @@ import { useDate } from "@/utils/DateContext";
 import { useNavigation } from "expo-router";
 import React from "react";
 import { SafeAreaView, Text, StyleSheet } from "react-native";
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import {CalendarList} from 'react-native-calendars';
 
 
 export default function CalendarScreen() {
@@ -15,11 +15,10 @@ export default function CalendarScreen() {
       <CalendarList
       pastScrollRange={50}
       futureScrollRange={0}
-      onDayPress={(day) => {
+      onDayPress={(day:string) => {
         navigation.navigate('calendar-exercises', {
           date: day.dateString
         });
-        console.log('selected day', day)
       }}
       theme={{
         calendarBackground: "#E5E5E5",

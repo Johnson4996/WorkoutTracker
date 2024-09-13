@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, FlatList, SafeAreaView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { addExercise, deleteExercise, fetchExercisesByGroup } from '@/utils/database';
+import { addExercise, deleteExercise, getAllExercises } from '@/utils/database';
 import NewExerciseModal from '@/components/NewExerciseModal';
 import ExerciseItem from '@/components/ExerciseItem';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -27,23 +27,28 @@ export default function AddExerciseScreen() {
 const [searchPhrase, setSearchPhrase] = useState("");
 const [clicked, setClicked] = useState(false);
 const [activeTab, setActiveTab] = useState("chest");
-const [exercises, setExercises] = useState([]);
+const [allExercises, setAllExercises] = useState<Exercise[]>([]);
 const [viewModal, setViewModal] = useState(false);
+const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([]);
+
+const fetchExercises = async () => {
+  try {
+    const data = await getAllExercises();
+    setAllExercises(data);
+  } catch (error) {
+    console.error('Error fetching exercises:', error);
+  }
+};
+
+useEffect(() => {
+  fetchExercises();
+}, 
+[])
 
 
 useEffect(() => {
-  const fetchExercises = async () => {
-    try {
-      const data = await fetchExercisesByGroup(activeTab);
-      setExercises(data);
-    } catch (error) {
-      console.error('Error fetching exercises:', error);
-    }
-  };
-
-  fetchExercises();
-}, 
-[activeTab, exercises])
+  setFilteredExercises(allExercises.filter(exercise => exercise.muscle_group === activeTab));
+}, [activeTab, allExercises]);
 
 
 
@@ -56,67 +61,69 @@ const renderItem = ({ item }: { item: Exercise }) => (
 
 const handleAddExercise = async (name: string, muscleGroup: string, description: string) => {
   await addExercise(name, muscleGroup, description)
+  await fetchExercises(); 
 }
 
 const handleDeleteExercise = async (id: number) => {
   console.log("Delete exercise id: ", id)
   await deleteExercise(id)
+  await fetchExercises(); 
 }
 
 
 
-  return (
-<GestureHandlerRootView>
-    <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-            <SearchBar searchPhrase={searchPhrase} setSearchPhrase={setSearchPhrase} setClicked={setClicked} clicked={clicked}/>
+    return (
+      <GestureHandlerRootView>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.header}>
+
+            <SearchBar searchPhrase={searchPhrase} setSearchPhrase={setSearchPhrase} setClicked={setClicked} clicked={clicked} />
             <ScrollView horizontal={true} style={styles.scrollView}>
-          {/* Add selected highlight */}
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("chest")}>
-            <Text style={styles.text}>Chest</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("biceps")}>
-            <Text style={styles.text}>Biceps</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("triceps")}>
-            <Text style={styles.text}>Triceps</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("shoulders")}>
-            <Text style={styles.text}>Shoulders</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("back")}>
-            <Text style={styles.text}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("legs")}>
-            <Text style={styles.text}>Legs</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("core")}>
-            <Text style={styles.text}>Core</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("other")}>
-            <Text style={styles.text}>Other</Text>
-          </TouchableOpacity>
-        </ScrollView>
-        </View>
-      <View style={styles.btnContainer}>
-        <TouchableOpacity style={styles.createBtn} onPress={() => setViewModal(true)}>
-            <Entypo name="circle-with-plus" size={18} color="#ECBE69" />
-            <Text style={styles.createText}>Create New Exercise</Text>
-        </TouchableOpacity>
-      </View>
-        <FlatList
-          data={exercises}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-        />
-        <NewExerciseModal
-        isVisible={viewModal}
-        onClose={() => setViewModal(false)}
-        onAddExercise={handleAddExercise}
-      />
-    </SafeAreaView>
-    </GestureHandlerRootView>
-  );
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("chest")}>
+                <Text style={[styles.text, activeTab === "chest" && styles.selectedText]}>Chest</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("biceps")}>
+                <Text style={[styles.text, activeTab === "biceps" && styles.selectedText]}>Biceps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("triceps")}>
+                <Text style={[styles.text, activeTab === "triceps" && styles.selectedText]}>Triceps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("shoulders")}>
+                <Text style={[styles.text, activeTab === "shoulders" && styles.selectedText]}>Shoulders</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("back")}>
+                <Text style={[styles.text, activeTab === "back" && styles.selectedText]}>Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("legs")}>
+                <Text style={[styles.text, activeTab === "legs" && styles.selectedText]}>Legs</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("core")}>
+                <Text style={[styles.text, activeTab === "core" && styles.selectedText]}>Core</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.scrollItem} onPress={() => setActiveTab("other")}>
+                <Text style={[styles.text, activeTab === "other" && styles.selectedText]}>Other</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+          <View style={styles.btnContainer}>
+            <TouchableOpacity style={styles.createBtn} onPress={() => setViewModal(true)}>
+              <Entypo name="circle-with-plus" size={18} color="#ECBE69" />
+              <Text style={styles.createText}>Create New Exercise</Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={filteredExercises}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+          />
+          <NewExerciseModal
+            isVisible={viewModal}
+            onClose={() => setViewModal(false)}
+            onAddExercise={handleAddExercise}
+          />
+        </SafeAreaView>
+      </GestureHandlerRootView>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -140,6 +147,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 5,
     borderRadius: 5,
+  },
+  selectedText: {
+    color: 'black',
+    fontFamily: 'Lexend_400Regular',
+    fontSize: 18
   },
   btnContainer: {
     alignItems: 'center',
