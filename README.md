@@ -17,6 +17,17 @@ Workout Tracker is a simple way to keep track of your workouts.
 - Create routines 
 - Minor UI tweaks, bug fixes, and other enhancements 
 
+## Images
+
+<p float="left">
+  <img src="./design/images/homepage.png" alt="Image 1" width="200" />
+  <img src="./design/images/exercise_list.png" alt="Image 2" width="200" />
+  <img src="./design/images/add_new_exercise.png" alt="Image 3" width="200" />
+  <img src="./design/images/add_exercise.png" alt="Image 3" width="200" />
+  <img src="./design/images/calendar.png" alt="Image 3" width="200" />
+  <img src="./design/images/cal_exercise_view.png" alt="Image 3" width="200" />
+</p>
+
 ## Run Application
 
 1. Install dependencies
